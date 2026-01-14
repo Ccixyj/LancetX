@@ -1,6 +1,7 @@
 package com.knightboost.lancet.internal.asm.visitor;
 
-import com.ss.android.ugc.bytex.common.visitor.BaseClassVisitor;
+
+import com.knightboost.lancet.internal.visitor.BaseClassVisitor;
 
 import org.objectweb.asm.ClassVisitor;
 

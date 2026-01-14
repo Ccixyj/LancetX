@@ -1,7 +1,7 @@
 package com.knightboost.lancet.internal.graph;
 
 
-import com.ss.android.ugc.bytex.common.graph.Node;
+import  com.knightboost.lancet.internal.graph.Node;
 
 import java.util.function.Consumer;
 

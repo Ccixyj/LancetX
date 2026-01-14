@@ -1,6 +1,7 @@
 package com.knightboost.lancet.internal.asm.visitor;
 
 import com.knightboost.lancet.internal.entity.ReplaceInfo;
+import com.knightboost.lancet.internal.log.WeaverLog;
 import com.knightboost.lancet.plugin.LancetContext;
 
 import org.objectweb.asm.MethodVisitor;
@@ -83,8 +84,7 @@ public class ReplaceWeaveMethodVisitor extends AdviceAdapter {
             }
 
             if (opcode == Opcodes.INVOKEVIRTUAL) { //成员函数替换
-                LancetContext.instance().getLogger()
-                        .i("replace in class: " + this.className
+                WeaverLog.i("replace in class: " + this.className
                                 + " method body " + methodName + methodDesc
                                 + " \n"
                                 + "    " + "replace " + owner + "." + name + desc
@@ -95,7 +95,8 @@ public class ReplaceWeaveMethodVisitor extends AdviceAdapter {
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC,
                         replaceInfo.replaceClassName,
                         replaceInfo.replaceMethodName,
-                        replaceInfo.replaceMethodDesc
+                        replaceInfo.replaceMethodDesc,
+                        false
                 );
             } else if (opcode == Opcodes.INVOKESTATIC && replaceInfo.targetIsStatic) {
                 //静态函数替换

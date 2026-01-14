@@ -3,8 +3,8 @@ package com.knightboost.lancetx
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         ImplA().testMethod()
         ClassA().printMessage("haha!")
 
-        init_method_insert_test.setOnClickListener {
+        findViewById<View>(R.id.init_method_insert_test).setOnClickListener {
             ConstructorTest(" original call^");
         }
     }

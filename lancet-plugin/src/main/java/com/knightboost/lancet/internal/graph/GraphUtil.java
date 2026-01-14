@@ -1,13 +1,8 @@
 package com.knightboost.lancet.internal.graph;
-import com.android.tools.r8.w.S;
+
 import com.knightboost.lancet.api.Scope;
 import com.knightboost.lancet.internal.log.WeaverLog;
 import com.knightboost.lancet.internal.util.TypeUtils;
-import com.ss.android.ugc.bytex.common.graph.ClassNode;
-import com.ss.android.ugc.bytex.common.graph.Graph;
-import com.ss.android.ugc.bytex.common.graph.InterfaceNode;
-import com.ss.android.ugc.bytex.common.graph.MethodEntity;
-import com.ss.android.ugc.bytex.common.graph.Node;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -52,7 +47,7 @@ public class GraphUtil {
                     WeaverLog.e("Weaver Warning!! =>>> Class named " + interfaceName + " with scope '" + scope + "' is not exists in apk,  this weave action will be ignored");
                     return;
                 }
-                if (!(node instanceof com.ss.android.ugc.bytex.common.graph.InterfaceNode)){
+                if (!(node instanceof  com.knightboost.lancet.internal.graph.InterfaceNode)){
                     throw new IllegalStateException(interfaceName+" 不是interface");
                 }
                 visitImplements((InterfaceNode) node, scope, visitor);

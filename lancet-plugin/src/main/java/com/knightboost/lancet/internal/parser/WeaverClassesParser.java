@@ -1,14 +1,13 @@
 package com.knightboost.lancet.internal.parser;
 
-import com.knightboost.lancet.internal.core.WeaverMethodParser;
-import com.knightboost.lancet.internal.log.WeaverLog;
 import com.knightboost.lancet.api.annotations.ClassOf;
 import com.knightboost.lancet.api.annotations.Group;
+import com.knightboost.lancet.internal.core.WeaverMethodParser;
+import com.knightboost.lancet.internal.graph.Graph;
+import com.knightboost.lancet.internal.log.WeaverLog;
 import com.knightboost.lancet.internal.util.AsmUtil;
 import com.knightboost.lancet.plugin.LancetContext;
-import com.ss.android.ugc.bytex.common.graph.Graph;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -17,6 +16,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -25,24 +25,27 @@ import java.util.stream.Collectors;
  */
 public class WeaverClassesParser {
 
-    private final List<ClassNode> weaverClasses =new ArrayList<>();
+    private final LancetContext context;
+    private final List<ClassNode> weaverClasses = new ArrayList<>();
     private static final String ANNOTATION_PACKAGE = "L" + ClassOf.class.getPackage()
             .getName().replace(".", "/");
 
     private static final String GROUP = Type.getDescriptor(Group.class);
 
-    public Graph graph;
+    private Graph graph;
 
 
-    public WeaverClassesParser(){
+    public WeaverClassesParser(LancetContext context) {
+        this.context = context;
     }
 
 
-    public void addWeaverClass(ClassNode classNode){
+    public void addWeaverClass(ClassNode classNode) {
         weaverClasses.add(classNode);
     }
 
-    public void parse(){
+    public void parse(Graph graph) {
+        this.graph = graph;
         for (ClassNode classNode : weaverClasses) {
             parseWeaver(classNode);
         }
@@ -63,7 +66,7 @@ public class WeaverClassesParser {
 
     public void parseWeaver(ClassNode cn) {
         checkNode(cn);
-        LancetContext weaveContext = LancetContext.instance();
+        LancetContext weaveContext = context;
         String className = cn.name;
 
         weaveContext.getTransformInfo().addWeaverClass(className);
@@ -77,18 +80,21 @@ public class WeaverClassesParser {
             }
         }
         boolean isEnable = weaveContext.isWeaveEnable(className);
-        if (!isEnable){
+        if (!isEnable) {
             return;
         }
 
         for (MethodNode method : cn.methods) {
-            if (WeaverMethodParser.isWeaverMethodNode(method)){
+            if (WeaverMethodParser.isWeaverMethodNode(method)) {
                 WeaverMethodParser weaverInfoParser = new WeaverMethodParser(
-                        graph,cn, method);
-                weaverInfoParser.parse();
+                        graph, cn, method);
+                weaverInfoParser.parse(context);
             }
         }
     }
 
 
+    public Graph getGraph() {
+        return Objects.requireNonNull(graph);
+    }
 }

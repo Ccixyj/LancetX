@@ -1,36 +1,34 @@
 package com.knightboost.lancet.internal.core;
 
-import com.knightboost.lancet.api.annotations.ChangeClassExtends;
-import com.knightboost.lancet.api.annotations.ImplementedInterface;
-import com.knightboost.lancet.api.annotations.ReplaceNewInvoke;
-import com.knightboost.lancet.internal.entity.ChangeExtendMeta;
-import com.knightboost.lancet.internal.entity.ReplaceInvokeInfo;
-import com.knightboost.lancet.internal.util.AnnotationNodeUtil;
 import com.knightboost.lancet.api.Scope;
+import com.knightboost.lancet.api.annotations.ChangeClassExtends;
 import com.knightboost.lancet.api.annotations.ClassOf;
+import com.knightboost.lancet.api.annotations.ImplementedInterface;
 import com.knightboost.lancet.api.annotations.Insert;
 import com.knightboost.lancet.api.annotations.NameRegex;
 import com.knightboost.lancet.api.annotations.Proxy;
 import com.knightboost.lancet.api.annotations.ReplaceInvoke;
+import com.knightboost.lancet.api.annotations.ReplaceNewInvoke;
 import com.knightboost.lancet.api.annotations.TargetClass;
 import com.knightboost.lancet.api.annotations.TargetMethod;
+import com.knightboost.lancet.internal.entity.ChangeExtendMeta;
 import com.knightboost.lancet.internal.entity.InsertInfo;
 import com.knightboost.lancet.internal.entity.ProxyInfo;
 import com.knightboost.lancet.internal.entity.ReplaceInfo;
+import com.knightboost.lancet.internal.entity.ReplaceInvokeInfo;
 import com.knightboost.lancet.internal.entity.TransformInfo;
+import com.knightboost.lancet.internal.graph.Graph;
 import com.knightboost.lancet.internal.graph.GraphUtil;
+import com.knightboost.lancet.internal.graph.Node;
 import com.knightboost.lancet.internal.parser.AopMethodAdjuster;
+import com.knightboost.lancet.internal.util.AnnotationNodeUtil;
 import com.knightboost.lancet.internal.util.TypeUtils;
 import com.knightboost.lancet.plugin.LancetContext;
-import com.ss.android.ugc.bytex.common.graph.Graph;
-import com.ss.android.ugc.bytex.common.graph.Node;
-import com.ss.android.ugc.bytex.common.log.ILogger;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.ParameterNode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +49,7 @@ public class WeaverMethodParser {
     private Pattern classNamePattern = Pattern.compile("^(((?![0-9])\\w+\\.)*((?![0-9])\\w+\\$)?(?![0-9])\\w+)((\\[])*)$");
 
     private static final Set<String> weaveAnnotations = new HashSet<>();
+
     static {
         weaveAnnotations.add(Type.getDescriptor(Insert.class));
         weaveAnnotations.add(Type.getDescriptor(Proxy.class));
@@ -59,14 +58,14 @@ public class WeaverMethodParser {
 
     }
 
-    public static boolean isWeaverMethodNode(MethodNode methodNode){
+    public static boolean isWeaverMethodNode(MethodNode methodNode) {
         List<AnnotationNode> annotationNodes = methodNode.visibleAnnotations;
-        if (annotationNodes == null || annotationNodes.size()==0){
+        if (annotationNodes == null || annotationNodes.size() == 0) {
             return false;
         }
 
         for (AnnotationNode annotationNode : annotationNodes) {
-            if (weaveAnnotations.contains(annotationNode.desc)){
+            if (weaveAnnotations.contains(annotationNode.desc)) {
                 return true;
             }
         }
@@ -88,8 +87,8 @@ public class WeaverMethodParser {
         this.methodNode = methodNode;
     }
 
-    public String sourceClassName(){
-        return  classNode.name;
+    public String sourceClassName() {
+        return classNode.name;
     }
 
     public void parseWeaverType(MethodNode methodNode) {
@@ -155,7 +154,7 @@ public class WeaverMethodParser {
         return methodDescBuilder.toString();
     }
 
-    public List<String> getTargetClasses(){
+    public List<String> getTargetClasses() {
         AnnotationNode targetClassNode = getAnnotation(methodNode, TargetClass.class);
         AnnotationNode implementedInterfaceNode = getAnnotation(methodNode, ImplementedInterface.class);
 
@@ -163,32 +162,27 @@ public class WeaverMethodParser {
             return new ArrayList<>();
         }
 
-        if (targetClassNode!=null && implementedInterfaceNode!=null){
+        if (targetClassNode != null && implementedInterfaceNode != null) {
             throw new IllegalStateException("@TargetClass 和 @ImplementedInterface 不能同时使用");
         }
 
 
         ArrayList<String> targetClasses = new ArrayList<>();
 
-        if (targetClassNode!=null){
+        if (targetClassNode != null) {
             String targetClassName = AnnotationNodeUtil.getAnnotationStringValue(targetClassNode, "value");
-            String[] vs = (String[])AnnotationNodeUtil.getAnnotationValue(targetClassNode,"scope");
+            String[] vs = (String[]) AnnotationNodeUtil.getAnnotationValue(targetClassNode, "scope");
             String targetClassDesc = targetClassName.replace('.', '/');
 
             Scope scope = Scope.SELF;
-            if (vs!=null){
-                scope =  Scope.valueOf(vs[1]);
+            if (vs != null) {
+                scope = Scope.valueOf(vs[1]);
             }
-            GraphUtil.childrenOf(graph,targetClassDesc,scope)
-                    .forEach(new Consumer<Node>() {
-                        @Override
-                        public void accept(Node node) {
-                            targetClasses.add(node.entity.name);
-                        }
-                    });
+            GraphUtil.childrenOf(graph, targetClassDesc, scope)
+                    .forEach(node -> targetClasses.add(node.entity.name));
         } else {
             List<String> targetInterfaces = (List<String>) AnnotationNodeUtil.getAnnotationValue(implementedInterfaceNode, "value");
-            if (targetInterfaces == null || targetInterfaces.size()==0){
+            if (targetInterfaces == null || targetInterfaces.size() == 0) {
                 throw new IllegalArgumentException("@ImplementedInterface values can't be null or empty");
             }
             List<String> targetInterfaceDescList = targetInterfaces.stream().map(new Function<String, String>() {
@@ -198,12 +192,12 @@ public class WeaverMethodParser {
                 }
             }).collect(Collectors.toList());
 
-            String[] vs = (String[])AnnotationNodeUtil.getAnnotationValue(implementedInterfaceNode,"scope");
+            String[] vs = (String[]) AnnotationNodeUtil.getAnnotationValue(implementedInterfaceNode, "scope");
             Scope scope = Scope.SELF;
-            if (vs!=null){
-                scope =  Scope.valueOf(vs[1]);
+            if (vs != null) {
+                scope = Scope.valueOf(vs[1]);
             }
-            GraphUtil.childrenOfInterfaces(graph,targetInterfaceDescList,scope)
+            GraphUtil.childrenOfInterfaces(graph, targetInterfaceDescList, scope)
                     .forEach(new Consumer<Node>() {
                         @Override
                         public void accept(Node node) {
@@ -213,28 +207,27 @@ public class WeaverMethodParser {
         }
 
 
-
         return targetClasses;
     }
 
-    public String getTargetMethodName(){
+    public String getTargetMethodName() {
         AnnotationNode targetMethodNode = getAnnotation(methodNode, TargetMethod.class);
-        if (targetMethodNode==null){
+        if (targetMethodNode == null) {
             return methodNode.name;
         }
-        return AnnotationNodeUtil.getAnnotationStringValue(targetMethodNode,"methodName");
+        return AnnotationNodeUtil.getAnnotationStringValue(targetMethodNode, "methodName");
 
     }
 
-    public void parse() {
+    public void parse(LancetContext context) {
         parseWeaverType(methodNode);
-        if (this.weaverType == null){
-            throw new IllegalStateException(classNode.name+
-                    "."+methodNode.name+" 未声明Weave类型");
+        if (this.weaverType == null) {
+            throw new IllegalStateException(classNode.name +
+                    "." + methodNode.name + " 未声明Weave类型");
         }
 
-        TransformInfo transformInfo = LancetContext.instance().getTransformInfo();
-        if (this.weaverType ==WeaverType.INSERT){
+        TransformInfo transformInfo = context.getTransformInfo();
+        if (this.weaverType == WeaverType.INSERT) {
             AnnotationNode insertAnnotation = getAnnotation(methodNode, Insert.class);
             String targetMethodName = getTargetMethodName();
             String targetMethodDesc = getTargetMethodDesc();
@@ -252,14 +245,14 @@ public class WeaverMethodParser {
                 transformInfo.addInsertInfo(insertInfo);
             }
 
-        }else if (this.weaverType ==WeaverType.PROXY){
+        } else if (this.weaverType == WeaverType.PROXY) {
             List<String> targetClasses = getTargetClasses();
             String targetMethodName = getTargetMethodName();
             String targetMethodDesc = getTargetMethodDesc();
             AnnotationNode nameRegex = getAnnotation(methodNode, NameRegex.class);
             String regex = null;
-            if (nameRegex!=null){
-                 regex = AnnotationNodeUtil.getAnnotationStringValue(nameRegex, "value");
+            if (nameRegex != null) {
+                regex = AnnotationNodeUtil.getAnnotationStringValue(nameRegex, "value");
             }
             for (String targetClass : targetClasses) {
                 ProxyInfo proxyInfo = new ProxyInfo(regex, targetClass, targetMethodName,
@@ -267,7 +260,7 @@ public class WeaverMethodParser {
                 transformInfo.addProxyInfo(proxyInfo);
             }
 
-        } else  if (this.weaverType == WeaverType.REPLACE_INVOKE){
+        } else if (this.weaverType == WeaverType.REPLACE_INVOKE) {
             AnnotationNode annotation = getAnnotation(methodNode, ReplaceInvoke.class);
             boolean isStatic = AnnotationNodeUtil.getAnnotationBoolValue(annotation, "isStatic", false);
 
@@ -277,23 +270,23 @@ public class WeaverMethodParser {
 
             AnnotationNode nameRegex = getAnnotation(methodNode, NameRegex.class);
             String regex = null;
-            if (nameRegex!=null){
+            if (nameRegex != null) {
                 regex = AnnotationNodeUtil.getAnnotationStringValue(nameRegex, "value");
             }
 
             for (String targetClass : targetClasses) {
-                if (!isStatic){
-                  targetMethodDesc = TypeUtils.removeFirstParam(targetMethodDesc);
+                if (!isStatic) {
+                    targetMethodDesc = TypeUtils.removeFirstParam(targetMethodDesc);
                 }
                 ReplaceInfo replaceInfo = new ReplaceInfo(regex, targetClass,
                         targetMethodName,
                         targetMethodDesc,
                         sourceClassName(), methodNode);
-                replaceInfo.targetIsStatic =isStatic;
+                replaceInfo.targetIsStatic = isStatic;
                 replaceInfo.check();
                 transformInfo.addReplaceInfo(replaceInfo);
             }
-        } else  if (this.weaverType == WeaverType.REPLACE_NEW_INVOKE){
+        } else if (this.weaverType == WeaverType.REPLACE_NEW_INVOKE) {
             AnnotationNode annotation = getAnnotation(methodNode, ReplaceNewInvoke.class);
             Type argumentType = Type.getArgumentTypes(methodNode.desc)[0];
             String className = argumentType.getClassName().replace('.', '/');
@@ -308,13 +301,13 @@ public class WeaverMethodParser {
                     methodNode);
             transformInfo.addReplaceInvokes(replaceInvokeInfo);
 
-        } else  if (this.weaverType == WeaverType.CHANGE_CLASS_EXTEND){
+        } else if (this.weaverType == WeaverType.CHANGE_CLASS_EXTEND) {
             AnnotationNode annotation = getAnnotation(methodNode, ChangeClassExtends.class);
             assert annotation != null;
             String beforeExtend = AnnotationNodeUtil.getAnnotationStringValue(annotation, "beforeExtend")
-                    .replace('.','/');
+                    .replace('.', '/');
             String afterExtend = AnnotationNodeUtil.getAnnotationStringValue(annotation, "afterExtend")
-                    .replace('.','/');
+                    .replace('.', '/');
             ChangeExtendMeta changeExtendMeta = new ChangeExtendMeta(beforeExtend, afterExtend);
             String classNameFilterRegex = AnnotationNodeUtil.getAnnotationStringValue(annotation, "classNameFilterRegex");
             changeExtendMeta.setClassNameFilterRegex(classNameFilterRegex);
@@ -363,8 +356,4 @@ public class WeaverMethodParser {
         }
     }
 
-
-    public ILogger getLogger(){
-        return LancetContext.instance().getLogger();
-    }
 }

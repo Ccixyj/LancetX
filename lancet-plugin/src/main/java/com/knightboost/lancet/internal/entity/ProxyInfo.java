@@ -23,7 +23,7 @@ public class ProxyInfo {
     public Pattern pattern;
 
 
-    private ThreadLocal<MethodNode> local = new ThreadLocal<MethodNode>(){
+    private final ThreadLocal<MethodNode> local = new ThreadLocal<MethodNode>(){
         @Override
         synchronized protected MethodNode initialValue() {
             return AsmUtil.clone(sourceMethod);

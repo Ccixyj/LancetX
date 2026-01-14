@@ -2,9 +2,6 @@ package com.knightboost.lancetx.weaver;
 
 import android.content.Intent;
 
-import com.knightboost.lancet.api.Origin;
-import com.knightboost.lancet.api.Scope;
-
 import com.knightboost.lancet.api.annotations.ReplaceNewInvoke;
 import com.knightboost.lancet.api.annotations.Weaver;
 import com.knightboost.lancetx.ProxyThread;

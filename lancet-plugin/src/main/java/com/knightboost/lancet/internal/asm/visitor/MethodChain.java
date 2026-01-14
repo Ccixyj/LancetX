@@ -1,6 +1,7 @@
 package com.knightboost.lancet.internal.asm.visitor;
 
 import com.google.common.base.Preconditions;
+import com.knightboost.lancet.internal.graph.MemberEntity;
 import com.knightboost.lancet.internal.log.WeaverLog;
 import com.knightboost.lancet.api.WeaverJoinPoint;
 import com.knightboost.lancet.api.annotations.ClassOf;
@@ -8,9 +9,9 @@ import com.knightboost.lancet.internal.parser.AopMethodAdjuster;
 import com.knightboost.lancet.internal.util.Bitset;
 import com.knightboost.lancet.internal.util.PrimitiveUtil;
 import com.knightboost.lancet.internal.util.TypeUtils;
-import com.ss.android.ugc.bytex.common.graph.ClassEntity;
-import com.ss.android.ugc.bytex.common.graph.FieldEntity;
-import com.ss.android.ugc.bytex.common.graph.Graph;
+import  com.knightboost.lancet.internal.graph.ClassEntity;
+import  com.knightboost.lancet.internal.graph.FieldEntity;
+import  com.knightboost.lancet.internal.graph.Graph;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -178,7 +179,7 @@ public class MethodChain {
     private void initFields() {
         if (fieldMap == null) {
             this.fieldMap = graph.get(className).entity.fields.stream()
-                    .collect(Collectors.toMap(f -> f.name(), f -> f));
+                    .collect(Collectors.toMap(MemberEntity::name, f -> f));
         }
     }
 

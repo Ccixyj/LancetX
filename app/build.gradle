@@ -1,26 +1,24 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'launcetX'
+
+//apply plugin: 'bytex'
+//ByteX {
+//    enable true
+//    enableInDebug true
+//}
 
 
-apply plugin: 'bytex'
-ByteX {
-    enable true
-    enableInDebug true
-}
+LancetX {
+    enable = true
+    debug = false
 
-
-apply plugin: 'LancetX'
-LancetX{
-    enable true
-    enableInDebug true
-
-    weaveGroup{
+    weaveGroup {
         insertTest {
             enable true
         }
         proxyTest {
-            enable false
+            enable true
         }
         replaceInvokeTest {
             enable true
@@ -70,4 +68,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-apply plugin: "com.vanniktech.maven.publish"
+//apply plugin: "com.vanniktech.maven.publish"

@@ -11,8 +11,8 @@ import com.knightboost.lancet.internal.graph.GraphUtil;
 import com.knightboost.lancet.internal.log.WeaverLog;
 import com.knightboost.lancet.internal.parser.AopMethodAdjuster;
 import com.knightboost.lancet.internal.util.TypeUtils;
-import com.ss.android.ugc.bytex.common.graph.Graph;
-import com.ss.android.ugc.bytex.common.graph.MethodEntity;
+import  com.knightboost.lancet.internal.graph.Graph;
+import  com.knightboost.lancet.internal.graph.MethodEntity;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;

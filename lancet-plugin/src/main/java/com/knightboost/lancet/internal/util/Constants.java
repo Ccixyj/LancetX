@@ -1,6 +1,7 @@
 package com.knightboost.lancet.internal.util;
 
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 
@@ -12,47 +13,50 @@ public interface Constants extends org.objectweb.asm.Opcodes {
 
     /* Indicates the ASM API version that is used throughout cglib */
 
-    public static final Class[] EMPTY_CLASS_ARRAY = {};
-    public static final Type[] TYPES_EMPTY = {};
+     Class[] EMPTY_CLASS_ARRAY = {};
+     Type[] TYPES_EMPTY = {};
 
-    public static final Signature SIG_STATIC =
+     Signature SIG_STATIC =
             TypeUtils.parseSignature("void <clinit>()");
 
-    public static final Type TYPE_OBJECT_ARRAY = TypeUtils.parseType("Object[]");
-    public static final Type TYPE_CLASS_ARRAY = TypeUtils.parseType("Class[]");
-    public static final Type TYPE_STRING_ARRAY = TypeUtils.parseType("String[]");
+     Type TYPE_OBJECT_ARRAY = TypeUtils.parseType("Object[]");
+     Type TYPE_CLASS_ARRAY = TypeUtils.parseType("Class[]");
+     Type TYPE_STRING_ARRAY = TypeUtils.parseType("String[]");
 
-    public static final Type TYPE_OBJECT = TypeUtils.parseType("Object");
-    public static final Type TYPE_CLASS = TypeUtils.parseType("Class");
-    public static final Type TYPE_CLASS_LOADER = TypeUtils.parseType("ClassLoader");
-    public static final Type TYPE_CHARACTER = TypeUtils.parseType("Character");
-    public static final Type TYPE_BOOLEAN = TypeUtils.parseType("Boolean");
-    public static final Type TYPE_DOUBLE = TypeUtils.parseType("Double");
-    public static final Type TYPE_FLOAT = TypeUtils.parseType("Float");
-    public static final Type TYPE_LONG = TypeUtils.parseType("Long");
-    public static final Type TYPE_INTEGER = TypeUtils.parseType("Integer");
-    public static final Type TYPE_SHORT = TypeUtils.parseType("Short");
-    public static final Type TYPE_BYTE = TypeUtils.parseType("Byte");
-    public static final Type TYPE_NUMBER = TypeUtils.parseType("Number");
-    public static final Type TYPE_STRING = TypeUtils.parseType("String");
-    public static final Type TYPE_THROWABLE = TypeUtils.parseType("Throwable");
-    public static final Type TYPE_BIG_INTEGER = TypeUtils.parseType("java.math.BigInteger");
-    public static final Type TYPE_BIG_DECIMAL = TypeUtils.parseType("java.math.BigDecimal");
-    public static final Type TYPE_STRING_BUFFER = TypeUtils.parseType("StringBuffer");
-    public static final Type TYPE_RUNTIME_EXCEPTION = TypeUtils.parseType("RuntimeException");
-    public static final Type TYPE_ERROR = TypeUtils.parseType("Error");
-    public static final Type TYPE_SYSTEM = TypeUtils.parseType("System");
-    public static final Type TYPE_SIGNATURE = TypeUtils.parseType("net.sf.cglib.core.Signature");
-    public static final Type TYPE_TYPE = Type.getType(Type.class);
+     Type TYPE_OBJECT = TypeUtils.parseType("Object");
+     Type TYPE_CLASS = TypeUtils.parseType("Class");
+     Type TYPE_CLASS_LOADER = TypeUtils.parseType("ClassLoader");
+     Type TYPE_CHARACTER = TypeUtils.parseType("Character");
+     Type TYPE_BOOLEAN = TypeUtils.parseType("Boolean");
+     Type TYPE_DOUBLE = TypeUtils.parseType("Double");
+     Type TYPE_FLOAT = TypeUtils.parseType("Float");
+     Type TYPE_LONG = TypeUtils.parseType("Long");
+     Type TYPE_INTEGER = TypeUtils.parseType("Integer");
+     Type TYPE_SHORT = TypeUtils.parseType("Short");
+     Type TYPE_BYTE = TypeUtils.parseType("Byte");
+     Type TYPE_NUMBER = TypeUtils.parseType("Number");
+     Type TYPE_STRING = TypeUtils.parseType("String");
+     Type TYPE_THROWABLE = TypeUtils.parseType("Throwable");
+     Type TYPE_BIG_INTEGER = TypeUtils.parseType("java.math.BigInteger");
+     Type TYPE_BIG_DECIMAL = TypeUtils.parseType("java.math.BigDecimal");
+     Type TYPE_STRING_BUFFER = TypeUtils.parseType("StringBuffer");
+     Type TYPE_RUNTIME_EXCEPTION = TypeUtils.parseType("RuntimeException");
+     Type TYPE_ERROR = TypeUtils.parseType("Error");
+     Type TYPE_SYSTEM = TypeUtils.parseType("System");
+     Type TYPE_SIGNATURE = TypeUtils.parseType("net.sf.cglib.core.Signature");
+     Type TYPE_TYPE = Type.getType(Type.class);
 
-    public static final String CONSTRUCTOR_NAME = "<init>";
-    public static final String STATIC_NAME = "<clinit>";
-    public static final String SOURCE_FILE = "<generated>";
-    public static final String SUID_FIELD_NAME = "serialVersionUID";
+     String CONSTRUCTOR_NAME = "<init>";
+     String STATIC_NAME = "<clinit>";
+     String SOURCE_FILE = "<generated>";
+     String SUID_FIELD_NAME = "serialVersionUID";
 
-    public static final int PRIVATE_FINAL_STATIC = ACC_PRIVATE | ACC_FINAL | ACC_STATIC;
+     int PRIVATE_FINAL_STATIC = ACC_PRIVATE | ACC_FINAL | ACC_STATIC;
 
-    public static final int SWITCH_STYLE_TRIE = 0;
-    public static final int SWITCH_STYLE_HASH = 1;
-    public static final int SWITCH_STYLE_HASHONLY = 2;
+     int SWITCH_STYLE_TRIE = 0;
+     int SWITCH_STYLE_HASH = 1;
+     int SWITCH_STYLE_HASHONLY = 2;
+
+    int ASM_API = Opcodes.ASM9;
+
 }

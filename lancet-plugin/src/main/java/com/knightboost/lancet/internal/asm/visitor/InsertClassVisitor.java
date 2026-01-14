@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class InsertClassVisitor extends BaseWeaveClassVisitor {
 
-    private Map<String, List<InsertInfo>> executeInfos;
+    private final Map<String, List<InsertInfo>> executeInfos;
     private List<InsertInfo> matched;
 
     public InsertClassVisitor(Map<String, List<InsertInfo>> executeInfos) {
@@ -73,7 +73,7 @@ public class InsertClassVisitor extends BaseWeaveClassVisitor {
                 int newAccess = (access & ~(Opcodes.ACC_PROTECTED | Opcodes.ACC_PUBLIC))
                         | Opcodes.ACC_PRIVATE;
 
-                MethodChain chain = transformer.getMethodChain();
+                MethodChain chain = transformer.methodChain;
                 chain.headFromInsert(newAccess, transformer.className, newName, desc);
 
                 /**

@@ -35,9 +35,9 @@ public class SystemLoggerImpl extends BaseLogger {
     @Override
     protected synchronized void write(LogLevel level, String prefix, String msg, Throwable t) {
         if (t != null) {
-            logger.log(level, String.format("[%-10s] %s", prefix, msg), t);
+            logger.log(level, String.format("[%-10s][%s] %s", prefix,Thread.currentThread().getName(), msg), t);
         } else {
-            logger.log(level, String.format("[%-10s] %s", prefix, msg));
+            logger.log(level, String.format("[%-10s][%s] %s", prefix,Thread.currentThread().getName(), msg));
         }
     }
 }

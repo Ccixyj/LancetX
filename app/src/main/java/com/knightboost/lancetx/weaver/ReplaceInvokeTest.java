@@ -17,8 +17,8 @@ public class ReplaceInvokeTest {
 
     @ReplaceInvoke(isStatic = true)
     @TargetClass(value = "android.util.Log",scope = Scope.SELF)
-    @TargetMethod(methodName = "i")
-    public static int replaceLogI2(String tag,String msg){
+    @TargetMethod(methodName = "e")
+    public static int replaceLogE(String tag,String msg){
         msg = msg + "被替换";
         return Log.e("zxw",msg);
     }
