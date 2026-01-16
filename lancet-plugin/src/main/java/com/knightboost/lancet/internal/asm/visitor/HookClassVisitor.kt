@@ -71,6 +71,6 @@ class HookClassVisitor(
         super.visitEnd()
         //头结点的end最后执行
         transformer.visitEnd()
-        WeaverLog.i("Visitor:HookClass ${transformer.className} end")
+        WeaverLog.d("Visitor:HookClass ${transformer.className} end")
     }
 }

@@ -12,6 +12,7 @@ import com.didiglobal.booster.transform.asm.AsmTransformer
 import com.didiglobal.booster.transform.util.CompositeCollector
 import com.didiglobal.booster.transform.util.collect
 import com.google.common.collect.Sets
+import com.knightboost.lancet.internal.log.WeaverLog
 import com.knightboost.lancet.plugin.BaseClassTransformer
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream
@@ -104,6 +105,8 @@ abstract class LancetXBoosterTransformTask : DefaultTask() {
             }.forEach {
                 it.get()
             }
+            WeaverLog.i("TASK:before transform ")
+
             for (transformer in classTransformers) {
                 transformer.onBeforeTransform()
             }
@@ -135,9 +138,11 @@ abstract class LancetXBoosterTransformTask : DefaultTask() {
                 }.forEach {
                     it.get()
                 }
+                WeaverLog.i("TASK:post after transform ")
                 //onOutputComplete
                 runCatching {
                     creator.writeTo(jos)
+                    WeaverLog.i("after copy to output ")
                     for (transformer in classTransformers) {
                         transformer.callOutputComplete(context, jos)
                     }
@@ -145,6 +150,8 @@ abstract class LancetXBoosterTransformTask : DefaultTask() {
                     println(it)
                     it.printStackTrace()
                 }
+                WeaverLog.i("TASK:transform complete")
+
             }
 
             transformers.map {
@@ -155,7 +162,7 @@ abstract class LancetXBoosterTransformTask : DefaultTask() {
                 it.get()
             }
         } catch (e: Exception) {
-//            project.logger.log(LogLevel.ERROR, "transform error", e)
+            WeaverLog.w("transform error", e)
         } finally {
             executor.shutdown()
             executor.awaitTermination(1L, TimeUnit.HOURS)

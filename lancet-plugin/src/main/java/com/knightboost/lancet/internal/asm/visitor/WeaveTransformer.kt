@@ -11,13 +11,14 @@ import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
+import java.util.concurrent.ConcurrentHashMap
 
 class WeaveTransformer(
     private val context: LancetContext,
     private val transformContext: TransformContext
 ) {
     // simple name of innerClass
-    var mInnerClassWriter: MutableMap<String, ClassWriter> = HashMap<String, ClassWriter>()
+    val mInnerClassWriter: MutableMap<String, ClassWriter> = ConcurrentHashMap()
 
     /**
      * 当前类的类名
@@ -68,13 +69,11 @@ class WeaveTransformer(
     }
 
     fun getInnerClassVisitor(classSimpleName: String): ClassVisitor {
-        var writer = mInnerClassWriter.get(classSimpleName)
-        if (writer == null) {
-            writer = ClassWriter(ClassWriter.COMPUTE_MAXS)
-            initForWriter(writer, classSimpleName)
-            mInnerClassWriter[classSimpleName] = writer
+        return mInnerClassWriter.getOrPut(classSimpleName) {
+            val w = ClassWriter(ClassWriter.COMPUTE_MAXS)
+            initForWriter(w, classSimpleName)
+            w
         }
-        return writer
     }
 
 
@@ -112,6 +111,7 @@ class WeaveTransformer(
         }
         return false
     }
+
     fun needWriteInnerClass(): Boolean {
         return !mInnerClassWriter.isEmpty()
     }
@@ -120,6 +120,7 @@ class WeaveTransformer(
 //        for (String className : mInnerClassWriter.keySet()) {
 //            getTail().visitInnerClass(getCanonicalName(className), this.className, className, Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC);
 //        }
+        WeaverLog.i("transForm:innerClass $mInnerClassWriter")
         if (!mInnerClassWriter.isEmpty()) {
             mInnerClassWriter.forEach { (s, v) ->
                 val name = "$className$$s.class"
@@ -143,6 +144,7 @@ class WeaveTransformer(
             this.write(data)
             this.closeArchiveEntry()
         } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

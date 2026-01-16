@@ -11,6 +11,7 @@ import com.knightboost.lancet.plugin.asm.CompositeClassSupervisor
 import com.knightboost.lancet.plugin.asm.WeaverSupervisor
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream
 import org.objectweb.asm.tree.ClassNode
+import java.util.concurrent.ConcurrentHashMap
 
 class LancetTransformer : BaseClassTransformer() {
 
@@ -19,7 +20,7 @@ class LancetTransformer : BaseClassTransformer() {
     private lateinit var graphBuilder: GraphBuilder
 
     private lateinit var parser: WeaverClassesParser
-    private val history: MutableMap<String, WeaveTransformer> = mutableMapOf()
+    private val history: MutableMap<String, WeaveTransformer> = ConcurrentHashMap()
 
     override fun onPreTransform(context: TransformContext) {
         super.onPreTransform(context)
@@ -77,7 +78,6 @@ class LancetTransformer : BaseClassTransformer() {
         WeaverLog.i("callOutputComplete writeInnerClass ${history.size}")
         history.forEach {
             it.value.generateInnerClasses(jos)
-
         }
     }
 }
